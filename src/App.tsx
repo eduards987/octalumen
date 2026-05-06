@@ -4,8 +4,8 @@ import React, { useMemo, useState } from "react";
 // Marca: Octa = oito pilares | Lumen = luz / clareza
 // Essência: iluminar os pilares que fazem um negócio ser visto, entendido e escolhido.
 
-const WHATSAPP_NUMBER = "5511999999999"; // Troque pelo seu número com DDI + DDD. Ex: 5516999999999
-const INSTAGRAM_URL = "https://instagram.com/seuinstagram";
+const WHATSAPP_NUMBER = "5516981264770";
+const INSTAGRAM_URL = "https://instagram.com/octalumen";
 const BUSINESS_EMAIL = "contato@octalumen.com.br";
 const CITY_STATE = "Brasil";
 const LAUNCH_SPOTS = 10;
@@ -19,7 +19,7 @@ const WHATSAPP_MESSAGES = {
   final: "Olá, Octalumen! Quero começar minha página profissional.",
 };
 
-const iconPaths = {
+const iconPaths: Record<string, string> = {
   arrowRight: "M5 12h14M13 5l7 7-7 7",
   check: "M20 6 9 17l-5-5",
   message: "M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v8Z",
@@ -30,13 +30,20 @@ const iconPaths = {
   clock: "M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Zm0-15v6l4 2",
   star: "M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21 7 14.2 2 9.3l6.9-1L12 2Z",
   instagram: "M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm5 6a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm6-1h.01",
-  globe: "M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Zm0 0c2.2-2.7 3.3-6 3.3-10S14.2 4.7 12 2m0 20c2.2-2.7-3.3-6-3.3-10S9.8 4.7 12 2M2 12h20",
+  globe: "M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Zm0 0c2.2-2.7 3.3-6 3.3-10S14.2 4.7 12 2m0 20c-2.2-2.7-3.3-6-3.3-10S9.8 4.7 12 2M2 12h20",
   file: "M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6Zm0 0v6h6M8 13h8M8 17h6",
   lock: "M7 11V8a5 5 0 0 1 10 0v3M6 11h12v10H6V11Zm6 4v2",
   light: "M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1M12 8a4 4 0 0 0-2 7.5V17h4v-1.5A4 4 0 0 0 12 8Z",
 };
 
-const plans = [
+type IconProps = { name: string; className?: string; filled?: boolean };
+type Plan = { name: string; setup: string; monthly: string; description: string; features: string[]; cta: string; promo?: string; highlighted?: boolean };
+type SectionTitleProps = { eyebrow?: string; title: string; subtitle?: string };
+type BadgeProps = { children: React.ReactNode; dark?: boolean };
+type PrimaryButtonProps = { href: string; children: React.ReactNode; className?: string };
+type LogoProps = { footer?: boolean };
+
+const plans: Plan[] = [
   {
     name: "Essencial",
     setup: "R$ 797",
@@ -97,7 +104,7 @@ const trustItems = [
   { icon: "file", title: "Entrega clara", text: "Você sabe exatamente o que será criado antes de iniciar o projeto." },
   { icon: "clock", title: "Prazo definido", text: "A entrega acontece após o envio completo das informações do negócio." },
 ];
-const faqs = [
+const faqs: Array<[string, string]> = [
   ["O que significa Octalumen?", "Octa vem do sentido de oito e representa os pilares de uma presença profissional. Lumen significa luz e clareza. A Octalumen cria páginas que iluminam o valor do seu negócio para que o cliente entenda, confie e entre em contato."],
   ["Em quanto tempo minha página fica pronta?", "A entrega normalmente acontece entre 3 e 7 dias úteis após o envio completo das informações, fotos, logo e pagamento da implantação."],
   ["Eu preciso saber mexer no site?", "Não. A Octalumen cria, publica e mantém a estrutura. Você só precisa enviar as informações do seu negócio e divulgar o link."],
@@ -106,12 +113,12 @@ const faqs = [
   ["Vocês garantem vendas?", "Não prometemos vendas garantidas. Entregamos uma estrutura profissional para melhorar sua apresentação, transmitir confiança e facilitar contatos reais."],
 ];
 
-export function createWhatsappLink(phoneNumber, message = "") {
+export function createWhatsappLink(phoneNumber: string | number | null | undefined, message = "") {
   const cleanNumber = String(phoneNumber || "").replace(/\D/g, "");
   return `https://wa.me/${cleanNumber}?text=${encodeURIComponent(message)}`;
 }
 
-function whatsappLink(message) {
+function whatsappLink(message: string) {
   return createWhatsappLink(WHATSAPP_NUMBER, message);
 }
 
@@ -126,28 +133,75 @@ export const octalumenTests = [
   { name: "logo possui caminho público", passed: LOGO_SRC.startsWith("/") && LOGO_SRC.endsWith(".png") },
 ];
 
-function Icon({ name, className = "h-5 w-5", filled = false }) {
+function Icon({ name, className = "h-5 w-5", filled = false }: IconProps) {
   return <svg viewBox="0 0 24 24" className={className} fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={iconPaths[name] || iconPaths.check} /></svg>;
 }
-function SectionTitle({ eyebrow, title, subtitle }) {
+function SectionTitle({ eyebrow, title, subtitle }: SectionTitleProps) {
   return <div className="mx-auto mb-10 max-w-3xl text-center">{eyebrow && <p className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-[#16B3A3]">{eyebrow}</p>}<h2 className="text-3xl font-bold tracking-tight text-[#0F2D3A] md:text-4xl">{title}</h2>{subtitle && <p className="mt-4 text-base leading-7 text-slate-600 md:text-lg">{subtitle}</p>}</div>;
 }
-function Badge({ children, dark = false }) {
+function Badge({ children, dark = false }: BadgeProps) {
   return <span className={`inline-flex rounded-full px-3 py-1 text-xs font-bold shadow-sm ${dark ? "bg-white/10 text-white ring-1 ring-white/15" : "border border-[#EAF2F5] bg-white/80 text-[#0F2D3A]"}`}>{children}</span>;
 }
-function PrimaryButton({ href, children, className = "" }) {
+function PrimaryButton({ href, children, className = "" }: PrimaryButtonProps) {
   return <a href={href} className={`inline-flex items-center justify-center gap-2 rounded-2xl bg-[#16B3A3] px-6 py-4 text-base font-black text-white shadow-lg shadow-teal-500/20 transition hover:-translate-y-0.5 hover:bg-[#119789] ${className}`}>{children}<Icon name="message" className="h-5 w-5" /></a>;
 }
-function Logo({ footer = false }) {
+function Logo({ footer = false }: LogoProps) {
   const [logoError, setLogoError] = useState(false);
   if (logoError) return <div className="flex items-center gap-3"><div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-[#0F2D3A] via-[#16B3A3] to-[#F4C95D] text-lg font-black text-white shadow-sm">O</div><div><p className={`${footer ? "text-xl" : "text-lg"} font-black tracking-tight text-[#0F2D3A]`}>Octalumen</p><p className="-mt-1 text-xs font-medium text-slate-500">Clareza • Estrutura • Confiança</p></div></div>;
-  return <img src={LOGO_SRC} alt="Octalumen" className={footer ? "h-20 w-auto object-contain sm:h-24" : "h-20 w-auto object-contain sm:h-24"} loading={footer ? "lazy" : "eager"} onError={() => setLogoError(true)} />;
+  return <img src={LOGO_SRC} alt="Octalumen" className={footer ? "h-14 w-auto object-contain" : "h-10 w-auto object-contain sm:h-12"} loading={footer ? "lazy" : "eager"} onError={() => setLogoError(true)} />;
 }
 function Header() {
   return <header className="sticky top-0 z-50 border-b border-[#EAF2F5] bg-white shadow-sm"><div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8"><a href="#top" className="flex items-center" aria-label="Ir para o início da página"><Logo /></a><nav className="hidden items-center gap-6 text-sm font-medium text-slate-600 md:flex" aria-label="Navegação principal"><a href="#essencia" className="hover:text-[#0F2D3A]">Essência</a><a href="#entregaveis" className="hover:text-[#0F2D3A]">O que inclui</a><a href="#planos" className="hover:text-[#0F2D3A]">Planos</a><a href="#faq" className="hover:text-[#0F2D3A]">FAQ</a></nav><a href={whatsappLink(WHATSAPP_MESSAGES.header)} className="hidden items-center gap-2 rounded-full bg-[#0F2D3A] px-4 py-2 text-sm font-semibold text-white sm:inline-flex" aria-label="Falar com a Octalumen no WhatsApp">Falar no WhatsApp <Icon name="message" className="h-4 w-4" /></a></div></header>;
 }
 function HeroPreview() {
-  return <div className="relative rounded-[2rem] border border-[#EAF2F5] bg-white p-4 shadow-2xl shadow-slate-200/80"><div className="absolute -right-3 -top-3 z-10 rounded-full bg-[#F4C95D] px-4 py-2 text-xs font-black uppercase tracking-widest text-[#0F2D3A] shadow-lg">Exemplo visual</div><div className="rounded-[1.5rem] bg-[#0F2D3A] p-5 text-white"><div className="flex items-center justify-between"><div><p className="text-sm text-slate-300">Presença profissional</p><h3 className="mt-1 text-2xl font-black">Clínica Bella Estética</h3></div><Icon name="light" className="h-7 w-7 text-[#F4C95D]" /></div><div className="mt-6 rounded-2xl bg-white p-5 text-[#0F2D3A]"><p className="text-xs font-bold uppercase tracking-widest text-[#16B3A3]">Clareza para confiar</p><h4 className="mt-2 text-2xl font-black">Tratamentos estéticos apresentados com valor e segurança</h4><p className="mt-3 text-sm leading-6 text-slate-600">Serviços, fotos, diferenciais, localização e contato em uma estrutura clara para o cliente chamar com confiança.</p><a href={whatsappLink("Olá, Octalumen! Quero ver esse exemplo de página.")} className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#16B3A3] px-4 py-3 font-bold text-white">Chamar no WhatsApp <Icon name="message" className="h-4 w-4" /></a></div><div className="mt-4 grid grid-cols-2 gap-3">{["Serviços", "Valor", "Confiança", "Contato"].map((item) => <div key={item} className="rounded-2xl bg-white/10 p-4 text-sm font-semibold text-slate-200"><Icon name="check" className="mb-2 h-4 w-4 text-[#F4C95D]" />{item}</div>)}</div></div></div>;
+  return (
+    <div className="relative rounded-[2rem] border border-[#EAF2F5] bg-white p-4 shadow-2xl shadow-slate-200/80">
+      <div className="absolute -right-3 -top-3 z-10 rounded-full bg-[#F4C95D] px-4 py-2 text-xs font-black uppercase tracking-widest text-[#0F2D3A] shadow-lg">
+        Exemplo visual
+      </div>
+
+      <div className="rounded-[1.5rem] bg-[#0F2D3A] p-5 text-white">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm text-slate-300">Presença profissional</p>
+            <h3 className="mt-1 text-2xl font-black">Clínica Bella Estética</h3>
+          </div>
+          <Icon name="light" className="h-7 w-7 text-[#F4C95D]" />
+        </div>
+
+        <div className="mt-6 rounded-2xl bg-white p-5 text-[#0F2D3A]">
+          <p className="text-xs font-bold uppercase tracking-widest text-[#16B3A3]">
+            Clareza para confiar
+          </p>
+          <h4 className="mt-2 text-2xl font-black">
+            Tratamentos estéticos apresentados com valor e segurança
+          </h4>
+          <p className="mt-3 text-sm leading-6 text-slate-600">
+            Serviços, fotos, diferenciais, localização e contato em uma estrutura clara para o cliente chamar com confiança.
+          </p>
+          <a
+            href={whatsappLink("Olá, Octalumen! Quero ver esse exemplo de página.")}
+            className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#16B3A3] px-4 py-3 font-bold text-white"
+          >
+            Chamar no WhatsApp
+            <Icon name="message" className="h-4 w-4" />
+          </a>
+        </div>
+
+        <div className="mt-4 grid grid-cols-2 gap-3">
+          {["Serviços", "Valor", "Confiança", "Contato"].map((item) => (
+            <div
+              key={item}
+              className="rounded-2xl bg-white/10 p-4 text-sm font-semibold text-slate-200"
+            >
+              <Icon name="check" className="mb-2 h-4 w-4 text-[#F4C95D]" />
+              {item}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default function OctalumenLandingPage() {
@@ -189,7 +243,7 @@ export default function OctalumenLandingPage() {
 
     <section className="px-4 py-16 sm:px-6 lg:px-8"><div className="mx-auto max-w-7xl rounded-[2.5rem] bg-[#0F2D3A] p-8 text-center text-white md:p-14"><p className="text-sm font-bold uppercase tracking-[0.2em] text-[#F4C95D]">Pronto para iluminar seu valor?</p><h2 className="mx-auto mt-4 max-w-3xl text-3xl font-black md:text-5xl">Transforme sua presença digital em uma estrutura clara, profissional e confiável.</h2><p className="mx-auto mt-5 max-w-2xl leading-8 text-slate-200">Fale com a Octalumen e descubra como mostrar melhor o valor do seu negócio para receber contatos reais.</p><div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row"><PrimaryButton href={whatsappLink(WHATSAPP_MESSAGES.final)}>Falar com a Octalumen</PrimaryButton><a href={INSTAGRAM_URL} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-6 py-4 font-black text-[#0F2D3A] transition hover:-translate-y-0.5 hover:bg-[#F8FAFC]">Ver Instagram <Icon name="instagram" className="h-5 w-5" /></a></div></div></section>
 
-    <footer className="border-t border-[#EAF2F5] bg-white px-4 py-10 sm:px-6 lg:px-8"><div className="mx-auto flex max-w-7xl flex-col justify-between gap-6 md:flex-row md:items-center"><div className="flex flex-col gap-0.5"><Logo footer /><p className="text-sm text-slate-500">Clareza para ser visto. Estrutura para ser escolhido.</p></div><div className="flex flex-col gap-2 text-sm text-slate-500 md:items-end"><p>{BUSINESS_EMAIL}</p><p>{CITY_STATE}</p><p>© 2026 Octalumen. Todos os direitos reservados.</p></div></div></footer>
+    <footer className="border-t border-[#EAF2F5] bg-white px-4 py-10 sm:px-6 lg:px-8"><div className="mx-auto flex max-w-7xl flex-col justify-between gap-6 md:flex-row md:items-center"><div className="flex flex-col gap-3"><Logo footer /><p className="text-sm text-slate-500">Clareza para ser visto. Estrutura para ser escolhido.</p></div><div className="flex flex-col gap-2 text-sm text-slate-500 md:items-end"><p>{BUSINESS_EMAIL}</p><p>{CITY_STATE}</p><p>© 2026 Octalumen. Todos os direitos reservados.</p></div></div></footer>
 
     <div className="fixed inset-x-0 bottom-0 z-50 border-t border-[#16B3A3] bg-white p-3 shadow-2xl md:hidden"><a href={whatsappLink(WHATSAPP_MESSAGES.diagnostic)} className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#16B3A3] px-5 py-4 font-black text-white" aria-label="Falar com a Octalumen no WhatsApp">Falar com a Octalumen <Icon name="message" className="h-5 w-5" /></a></div>
   </main>;
